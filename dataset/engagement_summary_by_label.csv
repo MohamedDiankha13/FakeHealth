@@ -1,0 +1,5 @@
+label,label_name,news_count,tweets_count,avg_tweets_per_news,replies_count,avg_replies_per_news,retweets_count,avg_retweets_per_news,dataset
+0,Fake,460,90827,197.45,6370,13.85,27109,58.93,HealthStory
+1,Real,1178,280371,238.01,20598,17.49,91883,78.0,HealthStory
+0,Fake,288,22177,77.0,890,3.09,7356,25.54,HealthRelease
+1,Real,311,24879,80.0,680,2.19,9529,30.64,HealthRelease

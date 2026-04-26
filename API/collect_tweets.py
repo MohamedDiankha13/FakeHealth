@@ -44,10 +44,11 @@ class TweetCollector:
 
     def dump_tweet_information(self,tweet_chunk, dump_dir):
         """Collect info and dump info of tweet chunk containing atmost 100 tweets"""
+        connector = self.twython_connector.get_twython_connection(Constants.GET_TWEET)
         try:
-            tweet_objects_map = self.twython_connector.get_twython_connection(Constants.GET_TWEET).lookup_status(id=tweet_chunk,
-                                                                                                        include_entities=True,
-                                                                                                        map=True)['id']
+            tweet_objects_map = connector.lookup_status(id=tweet_chunk,
+                                                        include_entities=True,
+                                                        map=True)['id']
             for tweet_id in tweet_chunk:
                 tweet_object = tweet_objects_map[str(tweet_id)]
                 if tweet_object:
@@ -57,6 +58,29 @@ class TweetCollector:
 
         except TwythonRateLimitError:
             logging.exception("Twython API rate limit exception")
+
+        except TwythonError as ex:
+            # A lot of historical tweet IDs are now deleted/protected and can return 404 on batch lookup.
+            # Fall back to per-ID retrieval so valid tweets in the chunk can still be collected.
+            if getattr(ex, "error_code", None) == 404:
+                missing_count = 0
+                for tweet_id in tweet_chunk:
+                    try:
+                        tweet_object = connector.show_status(id=tweet_id, include_entities=True)
+                        if tweet_object:
+                            create_dir(dump_dir)
+                            json.dump(tweet_object, open("{}/{}.json".format(dump_dir, tweet_id), "w"))
+                    except TwythonError as single_ex:
+                        if getattr(single_ex, "error_code", None) == 404:
+                            missing_count += 1
+                            continue
+                        logging.warning("tweet_id=%s skipped due to TwythonError: %s", tweet_id, single_ex)
+                    except Exception as single_ex:
+                        logging.warning("tweet_id=%s skipped due to unexpected error: %s", tweet_id, single_ex)
+                if missing_count:
+                    logging.info("Skipped %s unavailable tweets in chunk of %s", missing_count, len(tweet_chunk))
+            else:
+                logging.exception("Twython error in collecting tweet objects")
 
         except Exception as ex:
             logging.exception("exception in collecting tweet objects")
