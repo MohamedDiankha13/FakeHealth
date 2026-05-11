@@ -1,4 +1,0 @@
-        Jupyter notebooks to understand the dataset structure (note the fields, label distributions, and any class imbalance)
-        Using the HealthStory subset, train a simple baseline classifier (logistic regression or Naive Bayes with TF-IDF features) to distinguish real from fake health news
-        Record your baseline accuracy, precision, recall, and F1 score in a results table (this will become Table 1 in the final report, against which your LLM results will be compared.
-
