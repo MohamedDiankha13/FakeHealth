@@ -1,4 +1,0 @@
-Model,Accuracy,Precision,Recall,F1_macro,F1_Fake,F1_Real,CV_F1_mean,CV_F1_std,Features
-Logistic Regression,0.607,0.545,0.551,0.545,0.376,0.714,0.511,0.024,"TF-IDF (1-2gram, max=10k)"
-Naive Bayes,0.713,0.593,0.53,0.502,0.179,0.826,0.47,0.027,"TF-IDF (1-2gram, max=10k)"
-LinearSVC,0.626,0.563,0.571,0.564,0.4,0.729,0.509,0.026,"TF-IDF (1-2gram, max=10k)"
